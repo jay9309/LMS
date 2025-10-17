@@ -1,18 +1,16 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { assets } from "../../assets/assets";
+import { FaWhatsapp, FaInstagram, FaYoutube } from "react-icons/fa"; // import icons
 
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const scrollTo = (id) => {
-    // If already on home -> direct scroll
     if (location.pathname === "/") {
       const el = document.getElementById(id);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      // navigate to home with target state
       navigate("/", { state: { scrollTo: id } });
     }
   };
@@ -23,7 +21,9 @@ const Footer = () => {
         {/* Logo & Description */}
         <div className="flex flex-col md:items-start items-center w-full md:w-1/3">
           <h1 className="text-3xl font-bold text-yellow-400 cursor-pointer hover:scale-105 transition-transform duration-300">Aparaitech</h1>
-          <p className="mt-5 text-center md:text-left text-sm text-white/70 leading-relaxed max-w-xs">Empowering learners worldwide with accessible, interactive, and innovative online education.</p>
+          <p className="mt-5 text-center md:text-left text-sm text-white/70 leading-relaxed max-w-xs">
+            Empowering learners worldwide with accessible, interactive, and innovative online education.
+          </p>
         </div>
 
         {/* Company Links */}
@@ -46,6 +46,13 @@ const Footer = () => {
             <button className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-semibold rounded-full w-full sm:w-28 h-10 transition-all duration-300 shadow-md active:scale-95 hover:shadow-[0_0_12px_rgba(250,204,21,0.4)]">Subscribe</button>
           </div>
         </div>
+      </div>
+
+      {/* Social Icons at bottom-left */}
+      <div className="absolute bottom-4 left-6 flex gap-4 text-2xl text-white">
+        <a href="https://wa.me/+916364326342" target="_blank" rel="noreferrer" className="hover:text-green-500 transition-colors"><FaWhatsapp /></a>
+        <a href="https://www.instagram.com/aparaitech_global?igsh=MWxueWp2amt2c2Vwdg==" target="_blank" rel="noreferrer" className="hover:text-pink-500 transition-colors"><FaInstagram /></a>
+        <a href="http://www.youtube.com/@Aparaitech" target="_blank" rel="noreferrer" className="hover:text-red-500 transition-colors"><FaYoutube /></a>
       </div>
 
       <p className="py-4 text-center text-xs md:text-sm text-white/60 border-t border-white/10">© {new Date().getFullYear()} Aparaitech. All Rights Reserved.</p>

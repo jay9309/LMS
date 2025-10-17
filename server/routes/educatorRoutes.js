@@ -1,6 +1,6 @@
 import express from 'express'
 import { addCourse, educatorDashboardData, getEducatorCourses, getEnrolledStudentsData, updateRoleToEducator } from '../controllers/educatorController.js';
-import upload from '../configs/multer.js';
+import { upload } from '../middlewares/multer.js';
 import { protectEducator } from '../middlewares/authMiddleware.js';
 
 
@@ -23,3 +23,4 @@ educatorRouter.get('/enrolled-students', protectEducator, getEnrolledStudentsDat
 
 
 export default educatorRouter;
+

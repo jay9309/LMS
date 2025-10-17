@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaWhatsapp, FaInstagram, FaYoutube } from 'react-icons/fa';
 import { assets } from '../../assets/assets';
 
 const Footer = () => {
@@ -15,20 +16,15 @@ const Footer = () => {
       </div>
 
       {/* Right Section - Social Icons */}
-      <div className="flex items-center gap-4 max-md:mt-4">
-        {/* Facebook */}
-        <a href="#" className="hover:scale-110 transition-transform duration-200">
-          <img src={assets.facebook_icon} alt="facebook_icon" className="w-6 h-6" style={{ filter: 'invert(0%)' }} />
-        </a>
-
-        {/* Twitter icon acting as WhatsApp */}
+      <div className="flex items-center gap-4 max-md:mt-4 text-2xl">
+        {/* WhatsApp */}
         <a
-          href="https://wa.me/6364326342"
+          href="https://wa.me/+916364326342"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:scale-110 transition-transform duration-200"
+          className="hover:text-green-500 transition-colors duration-200"
         >
-          <img src={assets.twitter_icon} alt="whatsapp_icon" className="w-6 h-6" style={{ filter: 'invert(0%)' }} />
+          <FaWhatsapp />
         </a>
 
         {/* Instagram */}
@@ -36,9 +32,19 @@ const Footer = () => {
           href="https://www.instagram.com/aparaitech_global?igsh=MWxueWp2amt2c2Vwdg=="
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:scale-110 transition-transform duration-200"
+          className="hover:text-pink-500 transition-colors duration-200"
         >
-          <img src={assets.instagram_icon} alt="instagram_icon" className="w-6 h-6" style={{ filter: 'invert(0%)' }} />
+          <FaInstagram />
+        </a>
+
+        {/* YouTube */}
+        <a
+          href="http://www.youtube.com/@Aparaitech"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-red-500 transition-colors duration-200"
+        >
+          <FaYoutube />
         </a>
       </div>
     </footer>
