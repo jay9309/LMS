@@ -1,140 +1,111 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { assets } from '../../assets/assets'
-import { AppContext } from '../../context/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import Loading from '../../components/student/Loading';
+import React, { useContext, useEffect, useState } from "react";
+import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Loading from "../../components/student/Loading";
 
 const Dashboard = () => {
-
-  const { backendUrl, isEducator, currency, getToken } = useContext(AppContext)
-
-  const [dashboardData, setDashboardData] = useState(null)
-
-  const fetchDashboardData = async () => {
-    try {
-
-      const token = await getToken()
-//fixed
-      const { data } = await axios.get(backendUrl + 'api/educator/dashboard',
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-
-      if (data.success) {
-        setDashboardData(data.dashboardData)
-      } else {
-        toast.error(data.message)
-      }
-
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
+  const { backendUrl, isEducator, currency, getToken } = useContext(AppContext);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const token = await getToken();
+
+        const { data } = await axios.get(`${backendUrl}api/educator/dashboard`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (data.success) {
+          setDashboardData(data.dashboardData);
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     if (isEducator) {
-      fetchDashboardData()
+      fetchDashboardData();
     }
+  }, [isEducator, backendUrl, getToken]);
 
-  }, [isEducator])
-
-  const studentsData = [
-    {
-      id: 1,
-      name: 'Richard Sanford',
-      profileImage: assets.profile_img,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    },
-    {
-      id: 2,
-      name: 'Enrique Murphy',
-      profileImage: assets.profile_img2,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    },
-    {
-      id: 3,
-      name: 'Alison Powell',
-      profileImage: assets.profile_img3,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    },
-    {
-      id: 4,
-      name: 'Richard Sanford',
-      profileImage: assets.profile_img,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    },
-    {
-      id: 5,
-      name: 'Enrique Murphy',
-      profileImage: assets.profile_img2,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    },
-    {
-      id: 6,
-      name: 'Alison Powell',
-      profileImage: assets.profile_img3,
-      courseTitle: 'Build Text to Image SaaS App in React JS',
-      date: '22 Aug, 2024'
-    }
-  ];
-
+  if (loading) {
+    return (
+      <div className="p-8 animate-pulse grid gap-6 md:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-40 bg-gray-800 rounded-xl"></div>
+        ))}
+        <div className="col-span-3 mt-6 h-80 bg-gray-800 rounded-xl"></div>
+      </div>
+    );
+  }
 
   return dashboardData ? (
-    <div className='min-h-screen flex flex-col items-start justify-between gap-8 md:p-8 md:pb-0 p-4 pt-8 pb-0'>
-      <div className='space-y-5'>
-        <div className='flex flex-wrap gap-5 items-center'>
-          <div className='flex items-center gap-3 shadow-card border border-blue-500 p-4 w-56 rounded-md'>
-            <img src={assets.patients_icon} alt="patients_icon" />
-            <div>
-              <p className='text-2xl font-medium text-gray-600'>{dashboardData.enrolledStudentsData.length}</p>
-              <p className='text-base text-gray-500'>Total Enrolments</p>
+    <div className="min-h-screen flex flex-col items-start justify-between gap-10 md:p-8 md:pb-0 p-4 pt-8 pb-0">
+      <div className="space-y-12">
+        {/* ---- Stats Section ---- */}
+        <div className="flex flex-wrap gap-8 items-center justify-center">
+          {/* Total Enrollments */}
+          <div className="flex items-center gap-6 p-6 w-72 h-40 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-300 shadow-2xl transform transition-transform duration-300 hover:-translate-y-3 hover:shadow-3xl">
+            <img src={assets.patients_icon} alt="enrollments" className="w-16 h-16" />
+            <div className="flex flex-col">
+              <p className="text-4xl font-extrabold text-white">
+                {dashboardData.enrolledStudentsData.length}
+              </p>
+              <p className="text-white/90 font-semibold">Total Enrollments</p>
             </div>
           </div>
-          <div className='flex items-center gap-3 shadow-card border border-blue-500 p-4 w-56 rounded-md'>
-            <img src={assets.appointments_icon} alt="patients_icon" />
-            <div>
-              <p className='text-2xl font-medium text-gray-600'>{dashboardData.totalCourses}</p>
-              <p className='text-base text-gray-500'>Total Courses</p>
+
+          {/* Total Courses */}
+          <div className="flex items-center gap-6 p-6 w-72 h-40 rounded-2xl bg-gradient-to-r from-blue-400 to-blue-300 shadow-2xl transform transition-transform duration-300 hover:-translate-y-3 hover:shadow-3xl">
+            <img src={assets.appointments_icon} alt="courses" className="w-16 h-16" />
+            <div className="flex flex-col">
+              <p className="text-4xl font-extrabold text-white">{dashboardData.totalCourses}</p>
+              <p className="text-white/90 font-semibold">Total Courses</p>
             </div>
           </div>
-          <div className='flex items-center gap-3 shadow-card border border-blue-500 p-4 w-56 rounded-md'>
-            <img src={assets.earning_icon} alt="patients_icon" />
-            <div>
-              <p className='text-2xl font-medium text-gray-600'>{currency}{Math.floor(dashboardData.totalEarnings)}</p>
-              <p className='text-base text-gray-500'>Total Earnings</p>
+
+          {/* Total Earnings */}
+          <div className="flex items-center gap-6 p-6 w-72 h-40 rounded-2xl bg-gradient-to-r from-green-400 to-green-300 shadow-2xl transform transition-transform duration-300 hover:-translate-y-3 hover:shadow-3xl">
+            <img src={assets.earning_icon} alt="earnings" className="w-16 h-16" />
+            <div className="flex flex-col">
+              <p className="text-4xl font-extrabold text-white">
+                {currency}{Math.floor(dashboardData.totalEarnings)}
+              </p>
+              <p className="text-white/90 font-semibold">Total Earnings</p>
             </div>
           </div>
         </div>
-        <div>
-          <h2 className="pb-4 text-lg font-medium">Latest Enrolments</h2>
-          <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
-            <table className="table-fixed md:table-auto w-full overflow-hidden">
-              <thead className="text-gray-900 border-b border-gray-500/20 text-sm text-left">
+
+        {/* ---- Enrollments Table ---- */}
+        <div className="w-full">
+          <h2 className="pb-4 text-xl md:text-2xl font-bold text-gray-800">Recent Learners</h2>
+          <div className="overflow-x-auto rounded-xl border border-gray-300/30 shadow-lg">
+            <table className="min-w-full divide-y divide-gray-300/30">
+              <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-4 py-3 font-semibold text-center hidden sm:table-cell">#</th>
-                  <th className="px-4 py-3 font-semibold">Student Name</th>
-                  <th className="px-4 py-3 font-semibold">Course Title</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">#</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Student Name</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">Course Title</th>
                 </tr>
               </thead>
-              <tbody className="text-sm text-gray-500">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {dashboardData.enrolledStudentsData.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-500/20">
-                    <td className="px-4 py-3 text-center hidden sm:table-cell">{index + 1}</td>
-                    <td className="md:px-4 px-2 py-3 flex items-center space-x-3">
-                      <img
-                        src={item.student.imageUrl}
-                        alt="Profile"
-                        className="w-9 h-9 rounded-full"
-                      />
-                      <span className="truncate">{item.student.name}</span>
+                  <tr key={index} className="hover:bg-yellow-50 transition-colors duration-200">
+                    <td className="px-6 py-4 text-sm text-gray-700">{index + 1}</td>
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      <img src={item.student.imageUrl} alt="Profile" className="w-12 h-12 rounded-full" />
+                      <span className="truncate font-medium">{item.student.name}</span>
                     </td>
-                    <td className="px-4 py-3 truncate">{item.courseTitle}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700 truncate">{item.courseTitle}</td>
                   </tr>
                 ))}
               </tbody>
@@ -143,7 +114,9 @@ const Dashboard = () => {
         </div>
       </div>
     </div>
-  ) : <Loading />
-}
+  ) : (
+    <Loading />
+  );
+};
 
-export default Dashboard
+export default Dashboard;

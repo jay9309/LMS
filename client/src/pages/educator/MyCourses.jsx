@@ -1,71 +1,117 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AppContext } from '../../context/AppContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import Loading from '../../components/student/Loading';
+import React, { useContext, useEffect, useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Loading from "../../components/student/Loading";
 
 const MyCourses = () => {
-
-  const { backendUrl, isEducator, currency, getToken } = useContext(AppContext)
-
-  const [courses, setCourses] = useState(null)
-
-  const fetchEducatorCourses = async () => {
-
-    try {
-
-      const token = await getToken()
-
-      const { data } = await axios.get(backendUrl + 'api/educator/courses', { headers: { Authorization: `Bearer ${token}` } })
-
-      data.success && setCourses(data.courses)
-
-    } catch (error) {
-      toast.error(error.message)
-    }
-
-  }
+  const { backendUrl, isEducator, currency, getToken } = useContext(AppContext);
+  const [courses, setCourses] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isEducator) {
-      fetchEducatorCourses()
-    }
-  }, [isEducator])
+    const fetchEducatorCourses = async () => {
+      try {
+        setLoading(true);
+        const token = await getToken();
+        const { data } = await axios.get(`${backendUrl}api/educator/courses`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (data.success) setCourses(data.courses);
+        else toast.error(data.message);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (isEducator) fetchEducatorCourses();
+  }, [isEducator, backendUrl, getToken]);
 
-  return courses ? (
-    <div className="h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
-      <div className='w-full'>
-        <h2 className="pb-4 text-lg font-medium">My Courses</h2>
-        <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
-          <table className="md:table-auto table-fixed w-full overflow-hidden">
-            <thead className="text-gray-900 border-b border-gray-500/20 text-sm text-left">
-              <tr>
-                <th className="px-4 py-3 font-semibold truncate">All Courses</th>
-                <th className="px-4 py-3 font-semibold truncate">Earnings</th>
-                <th className="px-4 py-3 font-semibold truncate">Students</th>
-                <th className="px-4 py-3 font-semibold truncate">Published On</th>
+  // ✅ Loading skeleton
+  if (loading) {
+    return (
+      <div className="p-8 grid gap-6 animate-pulse">
+        <div className="h-6 bg-gray-800/70 rounded w-44"></div>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-16 bg-gray-800/60 rounded-lg"></div>
+        ))}
+      </div>
+    );
+  }
+
+  // ✅ Main view
+  return courses && courses.length > 0 ? (
+    <div className="min-h-screen flex flex-col p-6 md:p-10 bg-gradient-to-b from-gray-50 to-gray-100">
+      <h2 className="pb-6 text-2xl font-semibold text-gray-800 tracking-wide border-b border-gray-300">
+        My Courses
+      </h2>
+
+      <div className="overflow-x-auto mt-6 rounded-xl shadow-lg bg-white border border-gray-200">
+        <table className="w-full text-sm text-left text-gray-700">
+          <thead className="bg-gray-900 text-white uppercase text-xs tracking-wider">
+            <tr>
+              <th className="px-6 py-4">Course</th>
+              <th className="px-6 py-4 text-center">Earnings</th>
+              <th className="px-6 py-4 text-center">Students</th>
+              <th className="px-6 py-4 text-center">Published</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {courses.map((course) => (
+              <tr
+                key={course._id}
+                className="hover:bg-gray-50 transition-all duration-200 cursor-pointer hover:scale-[1.01]"
+              >
+                {/* Course Column */}
+                <td className="px-6 py-4 flex items-center gap-3">
+                  <img
+                    src={course.courseThumbnail}
+                    alt="Course"
+                    className="w-16 h-12 object-cover rounded-lg border border-gray-300 shadow-sm"
+                  />
+                  <div>
+                    <p className="font-medium text-gray-800 truncate max-w-[250px]">
+                      {course.courseTitle}
+                    </p>
+                    <p className="text-xs text-gray-500 italic">
+                      {course.discount
+                        ? `${course.discount}% off`
+                        : "No discount"}
+                    </p>
+                  </div>
+                </td>
+
+                {/* Earnings */}
+                <td className="px-6 py-4 text-center font-semibold text-green-600">
+                  {currency}{" "}
+                  {Math.floor(
+                    course.enrolledStudents.length *
+                      (course.coursePrice -
+                        (course.discount * course.coursePrice) / 100)
+                  ).toLocaleString()}
+                </td>
+
+                {/* Students */}
+                <td className="px-6 py-4 text-center font-medium text-blue-600">
+                  {course.enrolledStudents.length}
+                </td>
+
+                {/* Published On */}
+                <td className="px-6 py-4 text-center text-gray-500">
+                  {new Date(course.createdAt).toLocaleDateString()}
+                </td>
               </tr>
-            </thead>
-            <tbody className="text-sm text-gray-500">
-              {courses.map((course) => (
-                <tr key={course._id} className="border-b border-gray-500/20">
-                  <td className="md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 truncate">
-                    <img src={course.courseThumbnail} alt="Course Image" className="w-16" />
-                    <span className="truncate hidden md:block">{course.courseTitle}</span>
-                  </td>
-                  <td className="px-4 py-3">{currency} {Math.floor(course.enrolledStudents.length * (course.coursePrice - course.discount * course.coursePrice / 100))}</td>
-                  <td className="px-4 py-3">{course.enrolledStudents.length}</td>
-                  <td className="px-4 py-3">
-                    {new Date(course.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  ) : <Loading />
+  ) : (
+    <div className="min-h-screen flex items-center justify-center text-gray-500 text-lg font-medium">
+      No courses found 🧐
+    </div>
+  );
 };
 
 export default MyCourses;
