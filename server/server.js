@@ -17,7 +17,8 @@ await connectCloudinary()
 // ✅ FIXED: Allow both local + production domains
 const allowedOrigins = [
   'http://localhost:5173',              // local dev
-  'https://lms-project-azure.vercel.app' // your live frontend
+  'https://lms-project-azure.vercel.app' ,// your live frontend
+   'https://lms-ochre-three.vercel.app'
 ]
 
 app.use(
@@ -48,3 +49,6 @@ app.use('/api/user', express.json(), userRouter)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`))
+
+
+

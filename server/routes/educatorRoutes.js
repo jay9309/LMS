@@ -1,6 +1,6 @@
 import express from 'express'
 import { addCourse, educatorDashboardData, getEducatorCourses, getEnrolledStudentsData, updateRoleToEducator } from '../controllers/educatorController.js';
-import { upload } from '../middlewares/multer.js';
+import upload from '../configs/multer.js';
 import { protectEducator } from '../middlewares/authMiddleware.js';
 
 
@@ -10,7 +10,10 @@ const educatorRouter = express.Router()
 educatorRouter.get('/update-role', updateRoleToEducator)
 
 // Add Courses 
-educatorRouter.post('/add-course', upload.single('image'), protectEducator, addCourse)
+educatorRouter.post('/add-course', upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'projectPdf', maxCount: 1 }
+]), protectEducator, addCourse)
 
 // Get Educator Courses 
 educatorRouter.get('/courses', protectEducator, getEducatorCourses)
@@ -23,4 +26,5 @@ educatorRouter.get('/enrolled-students', protectEducator, getEnrolledStudentsDat
 
 
 export default educatorRouter;
+
 
