@@ -388,9 +388,22 @@ const CourseDetails = () => {
               <p className="md:text-lg text-gray-500 line-through">{currency}{courseData.coursePrice}</p>
               <p className="md:text-lg text-gray-500">{courseData.discount}% off</p>
             </div>
-            <button onClick={enrollCourse} className="mt-4 md:mt-6 w-full py-3 rounded bg-blue-600 text-white font-medium">
+            {/* <button onClick={enrollCourse} className="mt-4 md:mt-6 w-full py-3 rounded bg-blue-600 text-white font-medium">
               {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
-            </button>
+            </button> */}
+            <button
+  onClick={() => {
+    if (!isAlreadyEnrolled) {
+      window.open("https://rzp.io/l/8SjZQ5sW", "_blank"); // opens in new tab
+    } else {
+      enrollCourse(); // or handle "Already Enrolled" logic
+    }
+  }}
+  className="mt-4 md:mt-6 w-full py-3 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+>
+  {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
+</button>
+
             <div className="pt-6">
               <p className="md:text-xl text-lg font-medium text-gray-800">What's in the course?</p>
               <ul className="ml-4 pt-2 text-sm md:text-default list-disc text-gray-500">
