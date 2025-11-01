@@ -280,7 +280,7 @@ const CourseDetails = () => {
               </p>
             </div>
 
-            <button
+            {/* <button
               onClick={() => {
                 if (!isAlreadyEnrolled) {
                   window.open('https://rzp.io/l/8SjZQ5sW', '_blank');
@@ -291,6 +291,9 @@ const CourseDetails = () => {
               className="mt-4 md:mt-6 w-full py-3 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
             >
               {isAlreadyEnrolled ? 'Already Enrolled' : 'Enroll Now'}
+            </button> */}
+            <button onClick={enrollCourse} className="mt-4 md:mt-6 w-full py-3 rounded bg-blue-600 text-white font-medium">
+              {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
             </button>
 
             <div className="pt-6">
